@@ -1,0 +1,194 @@
+{
+  "name": "doc-send",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI am AI Assistant. How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -384,
+        -80
+      ],
+      "id": "93970d2b-7d87-4e36-a69b-3c7d790acbe6",
+      "name": "When chat message received",
+      "webhookId": "b98020c5-a6ed-4981-92d8-4812e857b534"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        -80
+      ],
+      "id": "62f94c05-c6f6-48e0-9966-30a6d9458222",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        80
+      ],
+      "id": "28000a4c-1c60-42bd-875d-48af60bb3f06",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "0Gqi1nIYVWGOcbjl",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "folderId": "19kd1IKbPWl8uWxll99r5BFDVRS5oKjFb",
+        "title": "Document"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        112,
+        -80
+      ],
+      "id": "375364e5-af12-4217-907f-594d07f02b84",
+      "name": "Create a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "arj9iySpsLUQSBVU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('AI Agent').item.json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        288,
+        -80
+      ],
+      "id": "053f867c-b844-4987-bb5d-a634bc36d04b",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "arj9iySpsLUQSBVU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=aymankhadija2004@gmail.com",
+        "subject": "Doc",
+        "emailType": "text",
+        "message": "Your document has been successfully stored in Google Drive.Please check it.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        -80
+      ],
+      "id": "831ca178-8167-42fe-9554-dbec22542177",
+      "name": "Send a message",
+      "webhookId": "9f9033e2-be8a-46f1-9dc1-0dc562728f9a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "0vVeter4pwK1JBCh",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a document": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7e1d0002-2128-42c4-9564-8625c581daf4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "91a5c2fda4fd130a315ba9167887becbf96673c23756628e1ee26d53eb8c9b6a"
+  },
+  "id": "tJs0Ao9bCub2r9Vt",
+  "tags": []
+}
